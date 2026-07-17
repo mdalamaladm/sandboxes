@@ -1,0 +1,8 @@
+void a();
+
+void a();
+
+int main()
+{
+	return 0;
+}
