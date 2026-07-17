@@ -1,37 +1,18 @@
 package main
 
 import (
-	"context"
-    "errors"
     "fmt"
-    "io"
-	"net"
+	"io"
     "net/http"
-
+    "time"
 )
 
 const keyServerAddr = "serverAddr"
 
-func loggingMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        fmt.Printf("started %s %s\n", r.Method, r.URL.Path)
-
-        next.ServeHTTP(w, r)
-
-        fmt.Printf("completed %s %s\n", r.Method, r.URL.Path)
-    })
-}
-
-func headerMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("X-App-Version", "1.0")
-
-        next.ServeHTTP(w, r)
-    })
-}
-
 func getRoot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
+	time.Sleep(40 * time.Second)
 
 	myName := r.PostFormValue("myName")
     if myName == "" {
@@ -73,33 +54,29 @@ func getHello(w http.ResponseWriter, r *http.Request) {
     io.WriteString(w, fmt.Sprintf("Hello, %s!\n", myName))
 }
 
+
 func main() {
-	mux := http.NewServeMux()
+    mux := http.NewServeMux()
     mux.HandleFunc("/", getRoot)
     mux.HandleFunc("/hello", getHello)
 
-	handler := loggingMiddleware(headerMiddleware(mux))
+	// Go’s default TLS configuration is generally secure, but you can customize it for your specific requirements
+	tlsConfig := &tls.Config{
+        MinVersion:               tls.VersionTLS12,
+        PreferServerCipherSuites: true,
+    }
 
-	ctx, cancelCtx := context.WithCancel(context.Background())
-	serverOne := &http.Server{
-		Addr:	":3333",
-		Handler: handler,
-		BaseContext: func(l net.Listener) context.Context {
-			ctx = context.WithValue(ctx, keyServerAddr, l.Addr().String())
+    server := &http.Server{
+        Addr:         ":8443",
+        Handler:      mux,
+        ReadTimeout:  10 * time.Second,
+        WriteTimeout: 10 * time.Second,
+        IdleTimeout:  120 * time.Second,
+    }
 
-			return ctx
-		},
-	}
-
-    go func() {
-        err := serverOne.ListenAndServe()
-        if errors.Is(err, http.ErrServerClosed) {
-            fmt.Printf("server one closed\n")
-        } else if err != nil {
-            fmt.Printf("error listening for server one: %s\n", err)
-        }
-        cancelCtx()
-    }()
-
-	<-ctx.Done()
+    fmt.Println("Server starting on https://localhost:8443")
+    err := server.ListenAndServeTLS("cert.pem", "key.pem")
+    if err != nil {
+        fmt.Printf("error starting server: %s\n", err)
+    }
 }

@@ -1,37 +1,18 @@
 package main
 
 import (
-	"context"
-    "errors"
     "fmt"
-    "io"
-	"net"
+	"io"
     "net/http"
-
+    "time"
 )
 
 const keyServerAddr = "serverAddr"
 
-func loggingMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        fmt.Printf("started %s %s\n", r.Method, r.URL.Path)
-
-        next.ServeHTTP(w, r)
-
-        fmt.Printf("completed %s %s\n", r.Method, r.URL.Path)
-    })
-}
-
-func headerMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("X-App-Version", "1.0")
-
-        next.ServeHTTP(w, r)
-    })
-}
-
 func getRoot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
+	time.Sleep(40 * time.Second)
 
 	myName := r.PostFormValue("myName")
     if myName == "" {
@@ -73,33 +54,40 @@ func getHello(w http.ResponseWriter, r *http.Request) {
     io.WriteString(w, fmt.Sprintf("Hello, %s!\n", myName))
 }
 
+
+func securityHeadersMiddleware(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // Prevent clickjacking attacks
+        w.Header().Set("X-Frame-Options", "DENY")
+        
+        // Prevent MIME type sniffing
+        w.Header().Set("X-Content-Type-Options", "nosniff")
+        
+        // Enable XSS protection
+        w.Header().Set("X-XSS-Protection", "1; mode=block")
+        
+        // Enforce HTTPS
+        w.Header().Set("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+        
+        // Control what resources can be loaded
+        w.Header().Set("Content-Security-Policy", "default-src 'self'")
+        
+        next.ServeHTTP(w, r)
+    })
+}
+
 func main() {
-	mux := http.NewServeMux()
+    mux := http.NewServeMux()
     mux.HandleFunc("/", getRoot)
     mux.HandleFunc("/hello", getHello)
 
-	handler := loggingMiddleware(headerMiddleware(mux))
+    // Wrap your mux with security headers
+    securedMux := securityHeadersMiddleware(mux)
 
-	ctx, cancelCtx := context.WithCancel(context.Background())
-	serverOne := &http.Server{
-		Addr:	":3333",
-		Handler: handler,
-		BaseContext: func(l net.Listener) context.Context {
-			ctx = context.WithValue(ctx, keyServerAddr, l.Addr().String())
+    server := &http.Server{
+        Addr:    ":3333",
+        Handler: securedMux,
+    }
 
-			return ctx
-		},
-	}
-
-    go func() {
-        err := serverOne.ListenAndServe()
-        if errors.Is(err, http.ErrServerClosed) {
-            fmt.Printf("server one closed\n")
-        } else if err != nil {
-            fmt.Printf("error listening for server one: %s\n", err)
-        }
-        cancelCtx()
-    }()
-
-	<-ctx.Done()
+    server.ListenAndServe()
 }

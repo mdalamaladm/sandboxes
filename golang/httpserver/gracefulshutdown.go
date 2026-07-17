@@ -1,37 +1,22 @@
 package main
 
 import (
-	"context"
-    "errors"
+    "context"
     "fmt"
-    "io"
-	"net"
+	"io"
     "net/http"
-
+    "os"
+    "os/signal"
+    "syscall"
+    "time"
 )
 
 const keyServerAddr = "serverAddr"
 
-func loggingMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        fmt.Printf("started %s %s\n", r.Method, r.URL.Path)
-
-        next.ServeHTTP(w, r)
-
-        fmt.Printf("completed %s %s\n", r.Method, r.URL.Path)
-    })
-}
-
-func headerMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("X-App-Version", "1.0")
-
-        next.ServeHTTP(w, r)
-    })
-}
-
 func getRoot(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+
+	time.Sleep(40 * time.Second)
 
 	myName := r.PostFormValue("myName")
     if myName == "" {
@@ -73,33 +58,45 @@ func getHello(w http.ResponseWriter, r *http.Request) {
     io.WriteString(w, fmt.Sprintf("Hello, %s!\n", myName))
 }
 
+
 func main() {
-	mux := http.NewServeMux()
+    mux := http.NewServeMux()
     mux.HandleFunc("/", getRoot)
     mux.HandleFunc("/hello", getHello)
 
-	handler := loggingMiddleware(headerMiddleware(mux))
+    server := &http.Server{
+        Addr:         ":3333",
+        Handler:      mux,
+        ReadTimeout:  10 * time.Second,
+        WriteTimeout: 10 * time.Second,
+        IdleTimeout:  120 * time.Second,
+    }
 
-	ctx, cancelCtx := context.WithCancel(context.Background())
-	serverOne := &http.Server{
-		Addr:	":3333",
-		Handler: handler,
-		BaseContext: func(l net.Listener) context.Context {
-			ctx = context.WithValue(ctx, keyServerAddr, l.Addr().String())
-
-			return ctx
-		},
-	}
-
+    // Start server in a goroutine
     go func() {
-        err := serverOne.ListenAndServe()
-        if errors.Is(err, http.ErrServerClosed) {
-            fmt.Printf("server one closed\n")
-        } else if err != nil {
-            fmt.Printf("error listening for server one: %s\n", err)
+        fmt.Println("Server starting on :3333")
+        if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+            fmt.Printf("error starting server: %s\n", err)
+            os.Exit(1)
         }
-        cancelCtx()
     }()
 
-	<-ctx.Done()
+    // Set up channel to listen for interrupt signals
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+    
+    // Block until signal is received
+    <-quit
+    fmt.Println("Server is shutting down...")
+
+    // Create a context with timeout for shutdown
+    ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+    defer cancel()
+
+    // Attempt graceful shutdown
+    if err := server.Shutdown(ctx); err != nil {
+        fmt.Printf("Server forced to shutdown: %s\n", err)
+    }
+
+    fmt.Println("Server stopped")
 }
