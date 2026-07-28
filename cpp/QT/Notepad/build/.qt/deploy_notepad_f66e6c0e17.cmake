@@ -1,0 +1,8 @@
+include("/home/mdalam/Documents/Coding/QT/Notepad/build/.qt/QtDeploySupport.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/notepad-plugins.cmake" OPTIONAL)
+set(__QT_DEPLOY_I18N_CATALOGS "qtbase")
+
+qt6_deploy_runtime_dependencies(
+    EXECUTABLE "/home/mdalam/Documents/Coding/QT/Notepad/build/notepad"
+    GENERATE_QT_CONF
+)

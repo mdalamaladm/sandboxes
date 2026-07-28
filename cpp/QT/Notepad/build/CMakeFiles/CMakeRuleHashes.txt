@@ -1,0 +1,2 @@
+# Hashes of file build rules.
+becf038ba83ef55312bce0e8ada48609 CMakeFiles/notepad_autogen
