@@ -1,0 +1,4 @@
+/home/mdalam/Documents/Coding/sandboxes/cpp/QT/basic/build/CMakeFiles/HelloQt.dir
+/home/mdalam/Documents/Coding/sandboxes/cpp/QT/basic/build/CMakeFiles/edit_cache.dir
+/home/mdalam/Documents/Coding/sandboxes/cpp/QT/basic/build/CMakeFiles/rebuild_cache.dir
+/home/mdalam/Documents/Coding/sandboxes/cpp/QT/basic/build/CMakeFiles/HelloQt_autogen.dir
