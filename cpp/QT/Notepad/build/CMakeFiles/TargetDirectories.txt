@@ -1,8 +1,0 @@
-/home/mdalam/Documents/Coding/QT/Notepad/build/CMakeFiles/notepad.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/CMakeFiles/edit_cache.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/CMakeFiles/rebuild_cache.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/CMakeFiles/list_install_components.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/CMakeFiles/install.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/CMakeFiles/install/local.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/CMakeFiles/install/strip.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/CMakeFiles/notepad_autogen.dir

@@ -1,9 +1,0 @@
-/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/CMakeFiles/notepad.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/CMakeFiles/edit_cache.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/CMakeFiles/rebuild_cache.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/CMakeFiles/list_install_components.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/CMakeFiles/install.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/CMakeFiles/install/local.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/CMakeFiles/install/strip.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/CMakeFiles/notepad_autogen_timestamp_deps.dir
-/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/CMakeFiles/notepad_autogen.dir

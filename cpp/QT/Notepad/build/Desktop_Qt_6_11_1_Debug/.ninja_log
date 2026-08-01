@@ -1,9 +1,0 @@
-# ninja log v5
-1	479	1785219838819474166	notepad_autogen/timestamp	3e18608a477c9972
-1	479	1785219838819474166	notepad_autogen/mocs_compilation.cpp	3e18608a477c9972
-1	479	1785219838819474166	/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/notepad_autogen/timestamp	3e18608a477c9972
-1	479	1785219838819474166	/home/mdalam/Documents/Coding/QT/Notepad/build/Desktop_Qt_6_11_1_Debug/notepad_autogen/mocs_compilation.cpp	3e18608a477c9972
-483	6500	1785219844847657780	CMakeFiles/notepad.dir/notepad_autogen/mocs_compilation.cpp.o	4af83c02538c8fc7
-484	7053	1785219845400674550	CMakeFiles/notepad.dir/main.cpp.o	9c35ac64a5656ef2
-485	8445	1785219846793716750	CMakeFiles/notepad.dir/notepad.cpp.o	9a1ac9f3cfe85ea8
-8446	9084	1785219847428735959	notepad	fd264f7bc6634ed2
