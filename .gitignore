@@ -1,0 +1,11 @@
+# Ignore build folders and generated .cmake files, only under cpp/QT
+cpp/QT/**/build/
+cpp/QT/**/build-*/
+cpp/QT/**/cmake-build-*/
+
+cpp/QT/**/*.cmake
+!cpp/QT/**/CMakeLists.txt
+
+cpp/QT/**/CMakeCache.txt
+cpp/QT/**/CMakeFiles/
+cpp/QT/**/_deps/

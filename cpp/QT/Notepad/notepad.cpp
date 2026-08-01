@@ -1,10 +1,15 @@
 #include "notepad.h"
 #include "./ui_notepad.h"
 
-#include <QFileDialog>
 #include <QFile>
+#include <QFileDialog>
+#include <QFont>
+#include <QFontDialog>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QTimer>
 
 Notepad::Notepad(QWidget *parent)
     : QMainWindow(parent)
@@ -92,5 +97,68 @@ void Notepad::on_actionSave_as_triggered()
     QString text = ui->textEdit->toPlainText();
     out << text;
     file.close();
+}
+
+
+void Notepad::on_actionPrint_triggered()
+{
+    #if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
+        QPrinter printDev;
+    #if QT_CONFIG(printdialog)
+        QPrintDialog dialog(&printDev, this);
+        if (dialog.exec() == QDialog::Rejected)
+            return;
+    #endif // QT_CONFIG(printdialog)
+        ui -> textEdit -> print(&printDev);
+    #endif // QT_CONFIG(printer)
+}
+
+
+void Notepad::on_actionFont_triggered()
+{
+    bool fontSelected;
+    QFont font = QFontDialog::getFont(&fontSelected, this);
+
+    if (fontSelected)
+        ui->textEdit->setFont(font);
+}
+
+void Notepad::on_actionCopy_triggered()
+{
+    ui->textEdit->copy();
+
+    statusBar()->setStyleSheet(
+        "QStatusBar {"
+        "   background-color: white;"
+        "   color: black;"
+        "   padding: 10px;"
+        "}"
+        );
+    statusBar()->showMessage("Copied to clipboard", 2000);
+
+    QTimer::singleShot(2000, this, [this]() {
+        statusBar()->setStyleSheet("");
+    });
+
+}
+
+void Notepad::on_actionCut_triggered()
+{
+    ui->textEdit->cut();
+}
+
+void Notepad::on_actionPaste_triggered()
+{
+    ui->textEdit->paste();
+}
+
+void Notepad::on_actionUndo_triggered()
+{
+    ui->textEdit->undo();
+}
+
+void Notepad::on_actionRedo_triggered()
+{
+    ui->textEdit->redo();
 }
 

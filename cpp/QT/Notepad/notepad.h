@@ -26,6 +26,20 @@ private slots:
 
     void on_actionSave_as_triggered();
 
+    void on_actionPrint_triggered();
+
+    void on_actionFont_triggered();
+
+    void on_actionCopy_triggered();
+
+    void on_actionCut_triggered();
+
+    void on_actionPaste_triggered();
+
+    void on_actionUndo_triggered();
+
+    void on_actionRedo_triggered();
+
 private:
     Ui::Notepad *ui;
     QString currentFile;
